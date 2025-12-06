@@ -1,7 +1,7 @@
 fastapi
 uvicorn[standard]
 transformers
-torch==2.1.0
 protobuf
 peft
+
 
