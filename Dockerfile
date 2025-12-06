@@ -7,8 +7,8 @@ COPY requirements.txt .
 # Install all packages from PyPI
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Reinstall torch from CPU-only index (overrides CUDA build)
-RUN pip install --no-cache-dir torch==2.1.0+cpu --index-url https://download.pytorch.org/whl/cpu
+# Install Torch CPU-only
+RUN pip install --no-cache-dir torch==2.1.0 --index-url https://download.pytorch.org/whl/cpu
 
 COPY . .
 
