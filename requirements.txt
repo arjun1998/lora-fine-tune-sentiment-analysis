@@ -1,13 +1,9 @@
-# Core ML stack
 torch==2.1.2
-transformers==4.36.2
-
-# Web framework
+transformers==4.37.2
+peft==0.7.1
 fastapi==0.110.0
 uvicorn==0.29.0
-
-# Optional: if you use Hugging Face Hub directly
 huggingface-hub==0.20.3
-
-# Optional: for JSON parsing / validation
 pydantic==2.6.4
+numpy<2
+protobuf
