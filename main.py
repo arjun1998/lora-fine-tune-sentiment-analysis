@@ -1,16 +1,20 @@
 from fastapi import FastAPI
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from peft import PeftModel
 import torch
 from pydantic import BaseModel
 
-# Initialize FastAPI app
 app = FastAPI()
 
-# Model + tokenizer setup
-# Use DistilBERT tokenizer (base) and load your fine-tuned model weights
-model_name = "ArjunWK/distilbert-base-uncased-lora-text-classification"
-tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
+# Base model + tokenizer
+base_model_name = "distilbert-base-uncased"
+adapter_repo = "ArjunWK/distilbert-base-uncased-lora-text-classification"
+
+tokenizer = AutoTokenizer.from_pretrained(base_model_name)
+base_model = AutoModelForSequenceClassification.from_pretrained(base_model_name)
+
+# Apply LoRA adapter
+model = PeftModel.from_pretrained(base_model, adapter_repo)
 
 # Input schema
 class InputText(BaseModel):
@@ -21,14 +25,10 @@ labels = {0: "negative", 1: "positive"}
 
 @app.post("/predict")
 def predict(input: InputText):
-    # Tokenize input
     inputs = tokenizer(input.text, return_tensors="pt")
     outputs = model(**inputs)
 
-    # Get probabilities
     probs = torch.softmax(outputs.logits, dim=1)
-
-    # Predicted class
     pred_class = torch.argmax(probs, dim=1).item()
     confidence = probs[0][pred_class].item()
 
@@ -37,7 +37,6 @@ def predict(input: InputText):
         "confidence": round(confidence, 4)
     }
 
-# Optional root endpoint
 @app.get("/")
 def root():
-    return {"message": "Sentiment API is running!"}
+    return {"message": "Sentiment API with LoRA adapter is running!"}
