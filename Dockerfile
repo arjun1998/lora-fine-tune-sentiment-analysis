@@ -2,14 +2,14 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Copy requirements first
 COPY requirements.txt .
 
-# Install dependencies (CPU-only torch)
-RUN pip install --no-cache-dir -r requirements.txt \
-    --index-url https://download.pytorch.org/whl/cpu
+# Install FastAPI, Uvicorn, Transformers from PyPI
+RUN pip install --no-cache-dir fastapi uvicorn[standard] transformers
 
-# Copy your app code
+# Install Torch CPU-only
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
 COPY . .
 
 EXPOSE 8000
