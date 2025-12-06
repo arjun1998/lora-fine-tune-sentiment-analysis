@@ -4,11 +4,11 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-# Install FastAPI, Uvicorn, Transformers from PyPI
-RUN pip install --no-cache-dir fastapi uvicorn[standard] transformers
+# Install all packages from PyPI
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Torch CPU-only
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+# Reinstall torch from CPU-only index (overrides CUDA build)
+RUN pip install --no-cache-dir torch==2.1.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
 COPY . .
 
