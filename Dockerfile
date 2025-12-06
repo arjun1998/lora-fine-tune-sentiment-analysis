@@ -2,18 +2,22 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install core dependencies in small chunks
-RUN pip install --no-cache-dir fastapi uvicorn[standard]
-RUN pip install --no-cache-dir transformers protobuf
-RUN pip install --no-cache-dir peft
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Torch CPU-only from PyTorch index
-RUN pip install --no-cache-dir torch==2.1.0 --index-url https://download.pytorch.org/whl/cpu
+RUN pip install --no-cache-dir \
+    fastapi==0.110.0 \
+    uvicorn[standard]==0.29.0 \
+    transformers==4.36.2 \
+    protobuf \
+    peft \
+    torch==2.1.2 --index-url https://download.pytorch.org/whl/cpu \
+    huggingface-hub==0.20.3 \
+    pydantic==2.6.4
 
-# Copy app code
 COPY . .
 
-EXPOSE 8000
+EXPOSE 10000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-
+CMD ["python", "main.py"]
