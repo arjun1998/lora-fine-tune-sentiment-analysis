@@ -3,6 +3,8 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from peft import PeftModel
 import torch
 from pydantic import BaseModel
+import os
+import uvicorn
 
 app = FastAPI()
 
@@ -23,6 +25,10 @@ class InputText(BaseModel):
 # Label mapping
 labels = {0: "negative", 1: "positive"}
 
+@app.get("/")
+def health_check():
+    return {"status": "ok", "message": "FastAPI app is running on Render!"}
+
 @app.post("/predict")
 def predict(input: InputText):
     inputs = tokenizer(input.text, return_tensors="pt")
@@ -37,6 +43,7 @@ def predict(input: InputText):
         "confidence": round(confidence, 4)
     }
 
-@app.get("/")
-def root():
-    return {"message": "Sentiment API with LoRA adapter is running!"}
+if __name__ == "__main__":
+    # Render sets PORT as an environment variable
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
