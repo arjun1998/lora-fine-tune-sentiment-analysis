@@ -1,7 +1,4 @@
 
----
-
-```markdown
 # Sentiment Analysis with DistilBERT + PEFT (LoRA) 🚀
 
 ## Overview
@@ -127,3 +124,4 @@ Built with ❤️ by arjun1998
 ```
 
 ---
+
