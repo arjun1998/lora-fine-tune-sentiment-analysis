@@ -23,7 +23,7 @@ Beyond experimentation, the project shows how to **deploy the model in productio
 ```mermaid
 flowchart TD
     A[Load DistilBERT Base Model] --> B[Fine‑Tune for Sentiment Classification]
-    B --> C[Apply PEFT (LoRA Adapters)]
+    B --> C[Apply PEFT - LoRA Adapters]
     C --> D[Save Adapter + Config]
     D --> E[FastAPI Service for Inference]
     E --> F[Docker Containerization]
@@ -137,6 +137,7 @@ Built with ❤️ by arjun1998
 ```
 
 ---
+
 
 
 
