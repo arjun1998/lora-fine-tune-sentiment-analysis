@@ -27,8 +27,6 @@ def load_model():
 
 
 
-# Apply LoRA adapter
-model = PeftModel.from_pretrained(base_model, adapter_repo)
 
 # Input schema
 class InputText(BaseModel):
