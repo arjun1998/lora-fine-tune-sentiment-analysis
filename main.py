@@ -12,21 +12,10 @@ app = FastAPI()
 base_model_name = "distilbert-base-uncased"
 adapter_repo = "ArjunWK/distilbert-base-uncased-lora-text-classification"
 
-# tokenizer = AutoTokenizer.from_pretrained(base_model_name)
-# base_model = AutoModelForSequenceClassification.from_pretrained(base_model_name)
-
-model = None
-tokenizer = None
-
-@app.on_event("startup")
-def load_model():
-    global tokenizer, model
-    tokenizer = AutoTokenizer.from_pretrained(base_model_name)
-    base_model = AutoModelForSequenceClassification.from_pretrained(base_model_name)
-    model = PeftModel.from_pretrained(base_model, adapter_repo)
-
-
-
+# Load tokenizer and model immediately (no startup event)
+tokenizer = AutoTokenizer.from_pretrained(base_model_name)
+base_model = AutoModelForSequenceClassification.from_pretrained(base_model_name)
+model = PeftModel.from_pretrained(base_model, adapter_repo)
 
 # Input schema
 class InputText(BaseModel):
@@ -37,7 +26,7 @@ labels = {0: "negative", 1: "positive"}
 
 @app.get("/")
 def health_check():
-    return {"status": "ok", "message": "FastAPI app is running on Render!"}
+    return {"status": "ok", "message": "FastAPI app is running!"}
 
 @app.post("/predict")
 def predict(input: InputText):
@@ -53,8 +42,6 @@ def predict(input: InputText):
         "confidence": round(confidence, 4)
     }
 
-
 if __name__ == "__main__":
-    # Render sets PORT as an environment variable
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
