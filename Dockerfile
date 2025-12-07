@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install system dependencies (optional but helps with builds)
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential git \
     && rm -rf /var/lib/apt/lists/*
@@ -19,5 +19,5 @@ COPY . .
 
 EXPOSE 10000
 
-# Let main.py handle $PORT dynamically
-CMD ["python", "main.py"]
+# Run Uvicorn directly
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000"]
