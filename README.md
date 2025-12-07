@@ -29,7 +29,7 @@ flowchart TD
     E --> F[Docker Containerization]
     F --> G[Deploy on AWS EC2 Instance]
     G --> H[Public API Endpoint]
-
+```
 ---
 
 ## 🛠️ Tech Stack
@@ -137,6 +137,7 @@ Built with ❤️ by arjun1998
 ```
 
 ---
+
 
 
 
