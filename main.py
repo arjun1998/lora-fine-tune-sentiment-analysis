@@ -3,7 +3,6 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from peft import PeftModel
 import torch
 from pydantic import BaseModel
-import uvicorn
 
 app = FastAPI()
 
@@ -28,14 +27,11 @@ def health_check():
 
 @app.post("/predict")
 def predict(input: InputText):
-    # Tokenize input
     inputs = tokenizer(input.text, return_tensors="pt", truncation=True, padding=True)
-    # Run through model
     with torch.no_grad():
         outputs = model(**inputs)
         prediction = torch.argmax(outputs.logits, dim=-1).item()
-    return {"label": labels[prediction], "score": torch.softmax(outputs.logits, dim=-1).tolist()}
-
-# Run Uvicorn when executed directly
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=10000)
+    return {
+        "label": labels[prediction],
+        "score": torch.softmax(outputs.logits, dim=-1).tolist()
+    }
