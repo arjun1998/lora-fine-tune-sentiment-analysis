@@ -1,9 +1,10 @@
 torch==2.1.2
 transformers==4.37.2
 peft==0.7.1
+huggingface-hub>=0.23.0  # **UPDATED: To fix the ImportError**
+accelerate==0.29.3      # **ADDED: To ensure compatibility with transformers 4.37.2**
 fastapi==0.110.0
 uvicorn==0.29.0
-huggingface-hub==0.20.3
 pydantic==2.6.4
 numpy<2
 protobuf
