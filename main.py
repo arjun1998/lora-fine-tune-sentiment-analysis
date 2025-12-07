@@ -12,8 +12,20 @@ app = FastAPI()
 base_model_name = "distilbert-base-uncased"
 adapter_repo = "ArjunWK/distilbert-base-uncased-lora-text-classification"
 
-tokenizer = AutoTokenizer.from_pretrained(base_model_name)
-base_model = AutoModelForSequenceClassification.from_pretrained(base_model_name)
+# tokenizer = AutoTokenizer.from_pretrained(base_model_name)
+# base_model = AutoModelForSequenceClassification.from_pretrained(base_model_name)
+
+model = None
+tokenizer = None
+
+@app.on_event("startup")
+def load_model():
+    global tokenizer, model
+    tokenizer = AutoTokenizer.from_pretrained(base_model_name)
+    base_model = AutoModelForSequenceClassification.from_pretrained(base_model_name)
+    model = PeftModel.from_pretrained(base_model, adapter_repo)
+
+
 
 # Apply LoRA adapter
 model = PeftModel.from_pretrained(base_model, adapter_repo)
@@ -42,6 +54,7 @@ def predict(input: InputText):
         "prediction": labels[pred_class],
         "confidence": round(confidence, 4)
     }
+
 
 if __name__ == "__main__":
     # Render sets PORT as an environment variable
