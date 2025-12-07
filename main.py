@@ -3,7 +3,6 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from peft import PeftModel
 import torch
 from pydantic import BaseModel
-import os
 import uvicorn
 
 app = FastAPI()
@@ -12,7 +11,6 @@ app = FastAPI()
 base_model_name = "distilbert-base-uncased"
 adapter_repo = "ArjunWK/distilbert-base-uncased-lora-text-classification"
 
-# Load tokenizer and model immediately (no startup event)
 tokenizer = AutoTokenizer.from_pretrained(base_model_name)
 base_model = AutoModelForSequenceClassification.from_pretrained(base_model_name)
 model = PeftModel.from_pretrained(base_model, adapter_repo)
@@ -30,18 +28,14 @@ def health_check():
 
 @app.post("/predict")
 def predict(input: InputText):
-    inputs = tokenizer(input.text, return_tensors="pt")
-    outputs = model(**inputs)
+    # Tokenize input
+    inputs = tokenizer(input.text, return_tensors="pt", truncation=True, padding=True)
+    # Run through model
+    with torch.no_grad():
+        outputs = model(**inputs)
+        prediction = torch.argmax(outputs.logits, dim=-1).item()
+    return {"label": labels[prediction], "score": torch.softmax(outputs.logits, dim=-1).tolist()}
 
-    probs = torch.softmax(outputs.logits, dim=1)
-    pred_class = torch.argmax(probs, dim=1).item()
-    confidence = probs[0][pred_class].item()
-
-    return {
-        "prediction": labels[pred_class],
-        "confidence": round(confidence, 4)
-    }
-
+# Run Uvicorn when executed directly
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host="0.0.0.0", port=10000)
