@@ -18,6 +18,24 @@ Beyond experimentation, the project shows how to **deploy the model in productio
 - Wrapped the model in a **FastAPI app**, containerized with **Docker**, and deployed on **EC2**
 
 ---
+## Quick Road Map of the project
+[ Load DistilBERT Base Model ]
+                ↓
+[ Fine‑Tune for Sentiment Classification ]
+                ↓
+[ Apply PEFT (LoRA Adapters) ]
+                ↓
+[ Save Adapter + Config ]
+                ↓
+[ FastAPI Service for Inference ]
+                ↓
+[ Docker Containerization ]
+                ↓
+[ Deploy on AWS EC2 Instance ]
+                ↓
+[ Public API Endpoint 
+
+---
 
 ## 🛠️ Tech Stack
 - **Model**: DistilBERT (Hugging Face Transformers)
@@ -124,4 +142,5 @@ Built with ❤️ by arjun1998
 ```
 
 ---
+
 
